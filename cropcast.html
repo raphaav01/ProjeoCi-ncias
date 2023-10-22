@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CropCast</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            z-index: 1;
+        }
+
+        .nav-container a {
+            width: auto;
+            height: auto;
+            margin-right: 10px;
+            /* Ajuste o valor da margem direita aqui */
+            margin-left: 10px;
+            /* Ajuste o valor da margem esquerda aqui */
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+            line-height: 20px;
+            font-size: 16px;
+            padding: 5px 10px;
+        }
+
+        .nav-container .inicio {
+            background-color: green;
+        }
+
+        .nav-container .previsao {
+            background-color: transparent;
+            margin-left: 0px;
+        }
+
+        .nav-container a.active {
+            background-color: transparent;
+            margin-left: 60px;
+        }
+
+        .line {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 30px;
+            background-color: white;
+        }
+
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #ffffff;
+            font-size: 30px;
+        }
+
+        .content input {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 200px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .content button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .second-screen {
+            display: none;
+            text-align: center;
+            margin-top: 150px;
+        }
+
+        .second-screen h2 {
+            color: #ffffff;
+            font-size: 40px;
+        }
+
+        .second-screen .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .second-screen input {
+            padding: 10px;
+            margin-right: 10px;
+            width: 200px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .second-screen .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .second-screen .button-container button {
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+            width: 200px;
+        }
+
+        .second-screen .button-container button:hover {
+            background-color: #45a049;
+        }
+
+        .weather-info {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        /* Personalize o estilo do texto da previsão do tempo aqui */
+        .weather-info p {
+            margin-bottom: 10px;
+        }
+
+        .weather-info p span {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .dot-container {
+            position: fixed;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            z-index: 1;
+        }
+
+        .dot {
+            width: 15px;
+            height: 15px;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            background-color: green;
+        }
+
+        .active {
+            background-color: orange;
+        }
+
+        .nav-container h1 {
+            font-size: 60px;
+            /* Defina o tamanho de fonte desejado */
+            margin: 0;
+            padding: 0;
+        }
+
+        .background-image-inicio {
+            background-image: url('imagem_inicio.png');
+            /* Substitua pelo caminho da imagem de fundo desejada para a página "Início" */
+            background-size: cover;
+        }
+
+        .background-image-previsao {
+            background-image: url('imagem_previsao.png');
+            /* Substitua pelo caminho da imagem de fundo desejada para a página "Previsão" */
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-image background-image-inicio"></div>
+    <div class="nav-container">
+        <h1 style="color: white; margin-left: 10px;">CropCast</h1>
+        <a class="active inicio" href="#" onclick="showFirstScreen()">Início</a>
+        <a class="previsao" href="#" onclick="showSecondScreen()">Previsão</a>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="content">
+        <h2>Bem-vindo ao CropCast!</h2>
+        <input type="text" id="nameInput" placeholder="Digite o seu nome">
+        <br>
+        <button onclick="saveName()">Salvar</button>
+        <p id="welcomeMessage"></p>
+    </div>
+
+    <div class="second-screen">
+        <h2>Obter Previsão</h2>
+        <div class="input-container">
+            <input type="text" id="locationInput" placeholder="Digite a cidade e país">
+        </div>
+        <div class="button-container">
+            <button onclick="getWeatherForecast()">Obter Previsão</button>
+        </div>
+        <div class="weather-info" id="weatherInfo"></div>
+        <div id="currentDate"></div>
+    </div>
+
+    <div class="dot-container">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    </div>
+
+    <script>
+        window.onload = function () {
+            var nameInput = document.getElementById('nameInput');
+            var savedName = localStorage.getItem('savedName');
+
+            if (savedName) {
+                nameInput.value = savedName;
+            }
+        };
+
+        function saveName() {
+            var nameInput = document.getElementById('nameInput');
+            var name = nameInput.value;
+
+            localStorage.setItem('savedName', name);
+
+            var welcomeMessage = document.getElementById('welcomeMessage');
+            welcomeMessage.textContent = "Bem-vindo, " + name + "!";
+
+            updateActiveDot(1);
+        }
+
+        function getWeatherForecast() {
+            var locationInput = document.getElementById('locationInput');
+            var location = locationInput.value;
+
+            var cityCountry = location.trim();
+
+            var city, country;
+            if (cityCountry.includes(',')) {
+                var parts = cityCountry.split(',');
+                city = parts[0].trim();
+                country = parts[1].trim();
+            } else {
+                city = cityCountry;
+                country = '';
+            }
+
+            var weatherInfo = document.getElementById('weatherInfo');
+            weatherInfo.innerHTML = '';
+
+            var apiKey = 'fdcdf53115b793ef830790d926052f4e'; // Substitua pelo seu API Key
+
+            var url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + ',' + country + '&appid=' + apiKey;
+
+            fetch(url)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    var weatherData = data.weather[0];
+                    var temperature = Math.round(data.main.temp - 273.15);
+                    var humidity = data.main.humidity;
+                    var windSpeed = data.wind.speed;
+
+                    var weatherInfo = document.getElementById('weatherInfo');
+
+                    var p1 = document.createElement('p');
+                    p1.innerHTML = '<span>Clima:</span>' + weatherData.main;
+                    weatherInfo.appendChild(p1);
+
+                    var p2 = document.createElement('p');
+                    p2.innerHTML = '<span>Descrição:</span>' + weatherData.description;
+                    weatherInfo.appendChild(p2);
+
+                    var p3 = document.createElement('p');
+                    p3.innerHTML = '<span>Temperatura:</span>' + temperature + '°C';
+                    weatherInfo.appendChild(p3);
+
+                    var p4 = document.createElement('p');
+                    p4.innerHTML = '<span>Umidade:</span>' + humidity + '%';
+                    weatherInfo.appendChild(p4);
+
+                    var p5 = document.createElement('p');
+                    p5.innerHTML = '<span>Velocidade do Vento:</span>' + windSpeed + ' m/s';
+                    weatherInfo.appendChild(p5);
+
+                    var currentDate = document.getElementById('currentDate');
+                    currentDate.textContent = 'Previsão atualizada em: ' + new Date().toLocaleString();
+
+                    updateActiveDot(2);
+                })
+                .catch(function (error) {
+                    console.log('Error:', error);
+                });
+        }
+
+        function showFirstScreen() {
+            var backgroundImage = document.querySelector('.background-image');
+            backgroundImage.classList.remove('background-image-previsao');
+            backgroundImage.classList.add('background-image-inicio');
+            var primeiraTela = document.querySelector('.content');
+            var segundaTela = document.querySelector('.second-screen');
+            primeiraTela.style.display = 'block';
+            segundaTela.style.display = 'none';
+            updateActiveDot(1);
+        }
+
+        function showSecondScreen() {
+            var backgroundImage = document.querySelector('.background-image');
+            backgroundImage.classList.remove('background-image-inicio');
+            backgroundImage.classList.add('background-image-previsao');
+            var primeiraTela = document.querySelector('.content');
+            var segundaTela = document.querySelector('.second-screen');
+            primeiraTela.style.display = 'none';
+            segundaTela.style.display = 'block';
+            updateActiveDot(2);
+        }
+
+        function updateActiveDot(index) {
+            var dots = document.getElementsByClassName('dot');
+
+            for (var i = 0; i < dots.length; i++) {
+                dots[i].classList.remove('active');
+            }
+
+            dots[index - 1].classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
