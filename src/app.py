@@ -5,21 +5,24 @@ import datetime
 import json
 from googletrans import Translator
 import locale
-
+from service.chatgpt import Chat
 
 class WeatherForecastApp:
     def __init__(self):
-        # self.openweathermap_api_key = self.load_api_key()
-        # if not self.openweathermap_api_key:
-        #     raise ValueError(
-        #         "A chave da API não foi fornecida no arquivo de configuração."
-        #     )
+        self.openweathermap_api_key = self.load_api_key()
+        self.chat = Chat()
+        if not self.openweathermap_api_key:
+            raise ValueError(
+                "A chave da API não foi fornecida no arquivo de configuração."
+            )
+
 
         self.location = None
         self.translator = Translator()
         locale.setlocale(locale.LC_ALL, 'pt_BR.utf8')
 
         self.create_window()
+
 
     def load_api_key(self):
         with open("config.json") as config_file:
@@ -72,36 +75,13 @@ class WeatherForecastApp:
 
         city, country = self.location.split(",")
 
-        location_key = self.get_location_key(city.strip(), country.strip())
-        if not location_key:
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, "Localização não encontrada.")
-            return
-
-        forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?q={city},{country}&appid={self.openweathermap_api_key}&units=metric"
-        forecast_response = requests.get(forecast_url)
-        forecast_data = forecast_response.json()
-
-        if forecast_response.status_code == 200:
-            forecast_list = forecast_data.get("list", [])
-
-            if forecast_list:
-                recommended_crop = self.get_recommended_crop(forecast_list)
-                self.result_text.delete(1.0, tk.END)
-                self.result_text.insert(
-                    tk.END,
-                    f"A cultura mais indicada para as condições climáticas é: {recommended_crop}.",
-                )
-            else:
-                self.result_text.delete(1.0, tk.END)
-                self.result_text.insert(
-                    tk.END, "Nenhuma previsão encontrada para a data informada."
-                )
-        else:
-            self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(
-                tk.END, "Erro ao obter previsão do tempo."
-            )
+        response = self.chat.ask(city, country) 
+        
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(
+                tk.END,
+                f"As culturas mais indicadas para as condições climáticas é: {response}.",
+        )
 
     def process_daily_forecast(self):
         self.location = self.location_entry.get()
