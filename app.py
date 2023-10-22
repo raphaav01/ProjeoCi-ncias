@@ -9,11 +9,11 @@ import locale
 
 class WeatherForecastApp:
     def __init__(self):
-        self.openweathermap_api_key = self.load_api_key()
-        if not self.openweathermap_api_key:
-            raise ValueError(
-                "A chave da API não foi fornecida no arquivo de configuração."
-            )
+        # self.openweathermap_api_key = self.load_api_key()
+        # if not self.openweathermap_api_key:
+        #     raise ValueError(
+        #         "A chave da API não foi fornecida no arquivo de configuração."
+        #     )
 
         self.location = None
         self.translator = Translator()
